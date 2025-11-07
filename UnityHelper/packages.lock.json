@@ -18,6 +18,12 @@
           "HarmonyX": "2.7.0"
         }
       },
+      "CSharpier.MsBuild": {
+        "type": "Direct",
+        "requested": "[1.1.2, )",
+        "resolved": "1.1.2",
+        "contentHash": "Ed3Z3g0j6ZbGfd7Mo2qjc7asQI5zwLu4u/2KfqPYABCuPajUXjC+2O5iOBdrdjrhDM5pIwRqwmjD7DTQi78hLQ=="
+      },
       "Hamunii.BepInEx.AutoPlugin": {
         "type": "Direct",
         "requested": "[2.0.1, )",

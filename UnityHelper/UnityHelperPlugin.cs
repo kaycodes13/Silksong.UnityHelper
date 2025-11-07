@@ -3,7 +3,7 @@ using BepInEx;
 namespace UnityHelper;
 
 #pragma warning disable CS1591
-[BepInAutoPlugin(id: "io.github.flibber-hk.unityhelper")]
+[BepInAutoPlugin(id: "org.silksong-modding.unityhelper")]
 public partial class UnityHelperPlugin : BaseUnityPlugin
 #pragma warning restore CS1591
 {
