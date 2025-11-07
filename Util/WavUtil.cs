@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace UnityHelper.Util;
 
-public class WavUtils
+public static class WavUtil
 {
     /// <summary>
     /// Read a file from embedded resources and output a Unity <see cref="AudioClip"/>.
