@@ -1,10 +1,9 @@
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-namespace UnityHelper.Util;
+namespace Silksong.UnityHelper.Util;
 
 /// <summary>
 /// Class containing utility methods for loading sprites.

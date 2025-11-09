@@ -8,6 +8,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <RootNamespace>Silksong.UnityHelper</RootNamespace>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisMode>recommended</AnalysisMode>
     <!-- Ignore warning about processor architecture mismatch with PlayMaker ConditionalExpression -->
@@ -22,6 +23,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageIcon>icon.png</PackageIcon>
     <PackageLicenseExpression>EUPL-1.2</PackageLicenseExpression>
+    <PackageId>Silksong.UnityHelper</PackageId>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RepositoryUrl>https://github.com/silksong-modding/Silksong.UnityHelper</RepositoryUrl>
   </PropertyGroup>

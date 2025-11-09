@@ -1,6 +1,6 @@
 using BepInEx;
 
-namespace UnityHelper;
+namespace Silksong.UnityHelper;
 
 #pragma warning disable CS1591
 [BepInAutoPlugin(id: "org.silksong-modding.unityhelper")]

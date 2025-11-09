@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEngine;
 using WavLib;
 
-namespace UnityHelper.Util;
+namespace Silksong.UnityHelper.Util;
 
 /// <summary>
 /// Class containing utility methods for loading AudioClips.

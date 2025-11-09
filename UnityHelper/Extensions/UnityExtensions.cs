@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace UnityHelper.Extensions;
+namespace Silksong.UnityHelper.Extensions;
 
 /// <summary>
 /// Class containing utils and extension methods for Unity objects.
