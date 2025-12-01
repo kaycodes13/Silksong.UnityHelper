@@ -214,6 +214,13 @@ public static class Tk2dUtil
     public static tk2dSpriteAnimationFrame[] CreateFrames(
         this tk2dSpriteCollectionData collection,
         params string[] spriteNames
+    ) => 
+        [.. spriteNames.Select(x => collection.CreateFrame(x))];
+
+    /// <inheritdoc cref="CreateFrames(tk2dSpriteCollectionData, string[])"/>
+    public static tk2dSpriteAnimationFrame[] CreateFrames(
+        this tk2dSpriteCollectionData collection,
+        IEnumerable<string> spriteNames
     ) =>
         [.. spriteNames.Select(x => collection.CreateFrame(x))];
 
