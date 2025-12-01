@@ -72,4 +72,33 @@ public static class SpriteUtil
 
         return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), Vector2.one * 0.5f, pixelsPerUnit);
     }
+
+    /// <summary>
+    /// If the given texture is unreadable, returns a readable copy of it.
+    /// If the given texture is readable, returns the same texture object.
+    /// </summary>
+    /// <param name="tex">The texture to make readable.</param>
+    /// <returns>A readable <see cref="Texture2D"/> object.</returns>
+    public static Texture2D GetReadableCopyOfTexture(Texture2D tex) {
+        if (tex.isReadable)
+            return tex;
+
+        var temp = RenderTexture.GetTemporary(
+            tex.width, tex.height, 0,
+            RenderTextureFormat.Default, RenderTextureReadWrite.Linear
+        );
+        Graphics.Blit(tex, temp);
+
+        var previous = RenderTexture.active;
+        RenderTexture.active = temp;
+
+        var readable = new Texture2D(tex.width, tex.height);
+        readable.ReadPixels(new Rect(0, 0, temp.width, temp.height), 0, 0);
+        readable.Apply();
+
+        RenderTexture.active = previous;
+        RenderTexture.ReleaseTemporary(temp);
+
+        return readable;
+    }
 }
