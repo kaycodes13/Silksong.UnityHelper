@@ -129,7 +129,7 @@ public static class Tk2dUtil
         #endregion
 
         // Make sure all incoming textures are readable
-        Texture2D[] readableSprites = [.. sprites.Select(SpriteUtil.GetReadableCopyOfTexture)];
+        Texture2D[] readableSprites = [.. sprites.Select(SpriteUtil.GetReadableTexture)];
 
         // Make a basic spritesheet
         Texture2D atlas = new(1, 1);
@@ -161,7 +161,6 @@ public static class Tk2dUtil
             [.. spriteCenters]
         );
 
-        UObject.DontDestroyOnLoad(atlas);
         UObject.DontDestroyOnLoad(spriteCollection);
 
         return spriteCollection;

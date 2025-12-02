@@ -10,6 +10,9 @@ namespace Silksong.UnityHelper.Util;
 /// </summary>
 public static class SpriteUtil
 {
+
+    #region Sprites
+
     /// <summary>
     /// Load an image from the assembly's embedded resources, and return a Sprite.
     /// </summary>
@@ -25,20 +28,11 @@ public static class SpriteUtil
         float pixelsPerUnit = 64f, Vector2? pivot = null, bool makeUnreadable = false
         #pragma warning restore CS1573
     ) {
-        using Stream stream = asm.GetManifestResourceStream(path);
+        byte[] buffer = GetEmbeddedImageData(asm, path);
 
-        byte[] buffer = new byte[stream.Length];
-        int bytesRead = stream.Read(buffer, 0, buffer.Length);
-        if (bytesRead != buffer.Length)
-        {
-            throw new IOException($"""
-                Failed to read the entire resource stream for path '{path}' in assembly '{asm.FullName}'.
-                Expected {stream.Length} bytes, but read {bytesRead}.
-                """);
-        }
-
-        var result = LoadSpriteFromArray(buffer, pixelsPerUnit, pivot, makeUnreadable);
+        Sprite result = LoadSpriteFromArray(buffer, pixelsPerUnit, pivot, makeUnreadable);
         result.name = result.texture.name = path;
+
         return result;
     }
 
@@ -61,19 +55,9 @@ public static class SpriteUtil
         float pixelsPerUnit = 64f, Vector2? pivot = null, bool makeUnreadable = false
         #pragma warning restore CS1573
     ) {
-        if (string.IsNullOrWhiteSpace(fileName))
-        {
-            throw new ArgumentException("Filename cannot be empty", nameof(fileName));
-        }
+        byte[] fileBytes = GetFileImageData(fileName);
 
-        if (!File.Exists(fileName))
-        {
-            throw new ArgumentException($"File {fileName} not found", nameof(fileName));
-        }
-
-        byte[] fileBytes = File.ReadAllBytes(fileName);
-
-        var result = LoadSpriteFromArray(fileBytes, pixelsPerUnit, pivot, makeUnreadable);
+        Sprite result = LoadSpriteFromArray(fileBytes, pixelsPerUnit, pivot, makeUnreadable);
         result.name = result.texture.name = Path.GetFileNameWithoutExtension(fileName);
         return result;
     }
@@ -92,10 +76,7 @@ public static class SpriteUtil
     /// <returns></returns>
     public static Sprite LoadSpriteFromArray(byte[] buffer, float pixelsPerUnit = 64f, Vector2? pivot = null, bool makeUnreadable = false)
     {
-        Texture2D tex = new(2, 2);
-
-        tex.LoadImage(buffer, makeUnreadable);
-
+        Texture2D tex = LoadTextureFromArray(buffer, makeUnreadable);
         return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), pivot ?? Vector2.one * 0.5f, pixelsPerUnit);
     }
 
@@ -103,13 +84,62 @@ public static class SpriteUtil
     public static Sprite LoadSpriteFromArray(byte[] buffer, float pixelsPerUnit)
         => LoadSpriteFromArray(buffer, pixelsPerUnit, null);
 
+    #endregion
+
+    #region Texture2D
+
+    /// <summary>
+    /// Load an image from the assembly's embedded resources and return a texture.
+    /// </summary>
+    /// <param name="asm">The assembly to load from.</param>
+    /// <param name="path">The path to the image.</param>
+    /// <param name="makeUnreadable">Whether or not to mark the texture as unreadable.</param>
+    /// <returns>A <see cref="Texture2D"/> object.</returns>
+    public static Texture2D LoadEmbeddedTexture(Assembly asm, string path, bool makeUnreadable = false)
+    {
+        byte[] buffer = GetEmbeddedImageData(asm, path);
+
+        Texture2D result = LoadTextureFromArray(buffer, makeUnreadable);
+        result.name = path;
+        return result;
+    }
+
+    /// <summary>
+    /// Load an image from a file on disc and return a texture.
+    /// </summary>
+    /// <param name="fileName">The path to the image file.</param>
+    /// <param name="makeUnreadable">Whether or not to mark the texture as unreadable.</param>
+    /// <returns>A <see cref="Texture2D"/> object.</returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static Texture2D LoadTextureFromFile(string fileName, bool makeUnreadable = false)
+    {
+        byte[] buffer = GetFileImageData(fileName);
+
+        Texture2D result = LoadTextureFromArray(buffer, makeUnreadable);
+        result.name = Path.GetFileNameWithoutExtension(fileName);
+        return result;
+    }
+
+    /// <summary>
+    /// Create a texture from a byte array.
+    /// </summary>
+    /// <param name="buffer">The raw image data.</param>
+    /// <param name="makeUnreadable">Whether or not to mark the texture as unreadable.</param>
+    /// <returns>A <see cref="Texture2D"/> object.</returns>
+    public static Texture2D LoadTextureFromArray(byte[] buffer, bool makeUnreadable = false)
+    {
+        Texture2D tex = new(2, 2);
+        tex.LoadImage(buffer, makeUnreadable);
+        return tex;
+    }
+
     /// <summary>
     /// If the given texture is unreadable, returns a readable copy of it.
     /// If the given texture is readable, returns the same texture object.
     /// </summary>
     /// <param name="tex">The texture to make readable.</param>
     /// <returns>A readable <see cref="Texture2D"/> object.</returns>
-    public static Texture2D GetReadableCopyOfTexture(Texture2D tex) {
+    public static Texture2D GetReadableTexture(Texture2D tex) {
         if (tex.isReadable)
             return tex;
 
@@ -131,4 +161,43 @@ public static class SpriteUtil
 
         return readable;
     }
+
+    #endregion
+
+    #region Local utilities
+
+    private static byte[] GetEmbeddedImageData(Assembly asm, string path)
+    {
+        using Stream stream = asm.GetManifestResourceStream(path);
+
+        byte[] buffer = new byte[stream.Length];
+        int bytesRead = stream.Read(buffer, 0, buffer.Length);
+        if (bytesRead != buffer.Length)
+        {
+            throw new IOException($"""
+                Failed to read the entire resource stream for path '{path}' in assembly '{asm.FullName}'.
+                Expected {stream.Length} bytes, but read {bytesRead}.
+                """);
+        }
+
+        return buffer;
+    }
+
+    private static byte[] GetFileImageData(string fileName)
+    {
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            throw new ArgumentException("Filename cannot be empty", nameof(fileName));
+        }
+
+        if (!File.Exists(fileName))
+        {
+            throw new ArgumentException($"File {fileName} not found", nameof(fileName));
+        }
+
+        return File.ReadAllBytes(fileName);
+    }
+
+    #endregion
+
 }
