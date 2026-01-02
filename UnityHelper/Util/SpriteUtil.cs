@@ -84,18 +84,32 @@ public static class SpriteUtil
     public static Sprite LoadSpriteFromArray(byte[] buffer, float pixelsPerUnit)
         => LoadSpriteFromArray(buffer, pixelsPerUnit, null);
 
-    #endregion
+	/// <summary>
+	/// Converts the given <see cref="Sprite"/>'s alpha format to premultiplied.
+	/// </summary>
+	/// <remarks>
+	/// If a sprite has a fuzzy white edge, or a white tint in areas where it's
+	/// partially transparent, running it through this function may fix the issue.
+	/// </remarks>
+	/// <param name="source">The sprite to convert.</param>
+	/// <returns>The same <see cref="Sprite"/>.</returns>
+	public static Sprite PremultiplyAlpha(this Sprite source) {
+        source.texture.PremultiplyAlpha();
+		return source;
+	}
 
-    #region Texture2D
+	#endregion
 
-    /// <summary>
-    /// Load an image from the assembly's embedded resources and return a texture.
-    /// </summary>
-    /// <param name="asm">The assembly to load from.</param>
-    /// <param name="path">The path to the image.</param>
-    /// <param name="makeUnreadable">Whether or not to mark the texture as unreadable.</param>
-    /// <returns>A <see cref="Texture2D"/> object.</returns>
-    public static Texture2D LoadEmbeddedTexture(Assembly asm, string path, bool makeUnreadable = false)
+	#region Texture2D
+
+	/// <summary>
+	/// Load an image from the assembly's embedded resources and return a texture.
+	/// </summary>
+	/// <param name="asm">The assembly to load from.</param>
+	/// <param name="path">The path to the image.</param>
+	/// <param name="makeUnreadable">Whether or not to mark the texture as unreadable.</param>
+	/// <returns>A <see cref="Texture2D"/> object.</returns>
+	public static Texture2D LoadEmbeddedTexture(Assembly asm, string path, bool makeUnreadable = false)
     {
         byte[] buffer = GetEmbeddedImageData(asm, path);
 
@@ -135,13 +149,35 @@ public static class SpriteUtil
         return tex;
     }
 
-    /// <summary>
-    /// If the given texture is unreadable, returns a readable copy of it.
-    /// If the given texture is readable, returns the same texture object.
-    /// </summary>
-    /// <param name="tex">The texture to make readable.</param>
-    /// <returns>A readable <see cref="Texture2D"/> object.</returns>
-    public static Texture2D GetReadableTexture(Texture2D tex) {
+	/// <summary>
+	/// Converts the given <see cref="Texture2D"/>'s alpha format to premultiplied.
+	/// </summary>
+	/// <remarks>
+	/// If a texture has a fuzzy white edge, or a white tint in areas where it's
+	/// partially transparent, running it through this function may fix the issue.
+	/// </remarks>
+	/// <param name="source">The texture to convert.</param>
+	/// <returns>The same <see cref="Texture2D"/>.</returns>
+	public static Texture2D PremultiplyAlpha(this Texture2D source) {
+		Color32[] pixels = source.GetPixels32();
+
+		for (int i = 0; i < pixels.Length; i++) {
+			Color px = pixels[i];
+			pixels[i] = new Color(px.r * px.a, px.g * px.a, px.b * px.a, px.a);
+		}
+
+		source.SetPixels32(pixels);
+		source.Apply();
+		return source;
+	}
+
+	/// <summary>
+	/// If the given texture is unreadable, returns a readable copy of it.
+	/// If the given texture is readable, returns the same texture object.
+	/// </summary>
+	/// <param name="tex">The texture to make readable.</param>
+	/// <returns>A readable <see cref="Texture2D"/> object.</returns>
+	public static Texture2D GetReadableTexture(Texture2D tex) {
         if (tex.isReadable)
             return tex;
 
